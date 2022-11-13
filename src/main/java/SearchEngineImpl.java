@@ -8,21 +8,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
-public class BooleanSearchEngine implements SearchEngine {
-    private List<File> files = new ArrayList<>();
-
-    public BooleanSearchEngine(File pdfsDir) {
-        Collections.addAll(files, Objects.requireNonNull(pdfsDir.listFiles()));
-    }
-
+public class SearchEngineImpl implements SearchEngine {
     @Override
     public List<PageEntry> search(String word) throws IOException {
         word = word.toLowerCase();
         List<PageEntry> list = new ArrayList<>();
-        for (File file : files) {
-            var doc = new PdfDocument(new PdfReader(file));
+        File pdfs = new File("C:\\Users\\Снежана\\IdeaProjects\\pcs-final-diplom2\\pdfs");
+        for (File pdf : pdfs.listFiles()) {
+            var doc = new PdfDocument(new PdfReader(pdf));
             int numberOfPages = doc.getNumberOfPages();
 
             for (int i = 1; i <= numberOfPages; i++) {
@@ -36,13 +30,13 @@ public class BooleanSearchEngine implements SearchEngine {
                     }
                 }
                 if (count != 0) {
-                    PageEntry pageEntry = new PageEntry(file.getName(), i, count);
+                    PageEntry pageEntry = new PageEntry(pdf.getName(), i, count);
                     list.add(pageEntry);
                 }
             }
         }
-
         Collections.sort(list);
         return list;
     }
 }
+
