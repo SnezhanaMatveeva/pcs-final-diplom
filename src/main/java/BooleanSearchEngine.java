@@ -41,7 +41,6 @@ public class BooleanSearchEngine implements SearchEngine {
                 }
             }
         }
-
         Collections.sort(list);
         return list;
     }

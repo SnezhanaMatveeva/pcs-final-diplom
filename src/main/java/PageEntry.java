@@ -15,7 +15,6 @@ public class PageEntry implements Comparable<PageEntry> {
         this.count = count;
     }
 
-
     @Override
     public int compareTo(PageEntry pageEntry) {
         if (this.count >= pageEntry.count) {
@@ -24,7 +23,6 @@ public class PageEntry implements Comparable<PageEntry> {
             return 1;
         }
     }
-
 
     @Override
     public String toString() {
