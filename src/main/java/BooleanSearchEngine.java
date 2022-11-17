@@ -22,58 +22,34 @@ public class BooleanSearchEngine implements SearchEngine {
             }
             int numberOfPages = doc.getNumberOfPages();
 
-            Map<Integer, Map<String, Integer>> mapMap = new HashMap<>();
+            Map<Integer, Map<String, Integer>> integerMapHashMap = new HashMap<>();
             for (int i = 1; i <= numberOfPages; i++) {
-                int count = 0;
                 PdfPage page = doc.getPage(i);
                 var text = PdfTextExtractor.getTextFromPage(page);
                 var words = text.split("\\P{IsAlphabetic}+");
-                Map<String, Integer> freqs = new HashMap<>(); // мапа, где ключом будет слово, а значением - частота
-                for (String word : words) { // перебираем слова
+                Map<String, Integer> freqs = new HashMap<>();
+                for (String word : words) {
                     if (word.isEmpty()) {
                         continue;
                     }
                     word = word.toLowerCase();
-//                    freqs.put(word, freqs.getOrDefault(word, 0) + 1);
                     int counter = freqs.getOrDefault(word, 0) + 1;
                     freqs.put(word, counter);
-                    mapMap.put(numberOfPages, freqs);
-                    map.put(file, mapMap);
+                    integerMapHashMap.put(i, freqs);
+                    map.put(file, integerMapHashMap);
                 }
             }
         }
     }
 
     @Override
-    public List<PageEntry> search(String word) throws IOException {
+    public List<PageEntry> search(String word) {
         word = word.toLowerCase();
         List<PageEntry> list = new ArrayList<>();
-//        for (File file : map.entrySet()) {
-//            var doc = new PdfDocument(new PdfReader(file));
-//            int numberOfPages = doc.getNumberOfPages();
-//
-//            for (int i = 1; i <= numberOfPages; i++) {
-//                int count = 0;
-//                PdfPage page = doc.getPage(i);
-//                var text = PdfTextExtractor.getTextFromPage(page);
-//                var words = text.split("\\P{IsAlphabetic}+");
-//                for (String s : words) {
-//                    if (s.toLowerCase().equals(word)) {
-//                        count++;
-//                    }
-//                }
-//                if (count != 0) {
-//                    PageEntry pageEntry = new PageEntry(file.getName(), i, count);
-//                    list.add(pageEntry);
-//                }
-//            }
-//        }
         for (Map.Entry<File, Map<Integer, Map<String, Integer>>> fileMapEntry : map.entrySet()) {
             for (Map.Entry<Integer, Map<String, Integer>> integerMapEntry : fileMapEntry.getValue().entrySet()) {
-                for (Map.Entry<String, Integer> stringIntegerEntry : integerMapEntry.getValue().entrySet()) {
-                    if (stringIntegerEntry.getKey().equals(word)) {
-                        list.add(new PageEntry(fileMapEntry.getKey().getName(), integerMapEntry.getKey(), stringIntegerEntry.getValue()));
-                    }
+                if (integerMapEntry.getValue().containsKey(word)) {
+                    list.add(new PageEntry(fileMapEntry.getKey().getName(), integerMapEntry.getKey(), integerMapEntry.getValue().get(word)));
                 }
             }
         }
