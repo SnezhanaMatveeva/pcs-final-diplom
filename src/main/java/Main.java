@@ -16,7 +16,13 @@ public class Main {
                         BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                         PrintWriter out = new PrintWriter(socket.getOutputStream());
                 ) {
-                    List<PageEntry> list = engine.search(in.readLine());
+                    List<PageEntry> list = null;
+                    try {
+                        list = engine.search(in.readLine());
+                    } catch (RuntimeException e) {
+                        out.println("Такого слова нет");
+                        continue;
+                    }
                     Gson gson = new Gson();
                     String json = gson.toJson(list);
                     out.println(json);
